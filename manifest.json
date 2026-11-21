@@ -1,0 +1,19 @@
+{
+  "name": "MealMitra - Smart Dinner Planner",
+  "short_name": "MealMitra",
+  "description": "Plan dinner, discover meal ideas and follow simple recipes.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff7ed",
+  "theme_color": "#ea580c",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
