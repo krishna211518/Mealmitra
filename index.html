@@ -34,7 +34,7 @@ const base=[
 {day:"Saturday",dish:"Veg Pulao + Raita",type:"veg",price:"₹70",icon:"🍚"},
 {day:"Sunday",dish:"Chicken Curry + Rice",type:"nonveg",price:"₹120",icon:"🍗"}
 ];
-let custom=[];try{custom=JSON.parse(localStorage.getItem("mealm​itra-dishes")||"[]")}catch(e){custom=[]}
+let custom=[];try{custom=JSON.parse(localStorage.getItem("mealmitra-dishes")||"[]")}catch(e){custom=[]}
 let activeFilter="all";
 const $=id=>document.getElementById(id);
 const allDishes=()=>[...base,...custom];
@@ -45,7 +45,7 @@ function randomDish(){const list=allDishes();const item=list[Math.floor(Math.ran
 $("filters").addEventListener("click",e=>{const b=e.target.closest("[data-filter]");if(!b)return;activeFilter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));render()});
 $("randomBtn").addEventListener("click",randomDish);$("randomTop").addEventListener("click",()=>{randomDish();$("suggestPanel").scrollIntoView({behavior:"smooth",block:"center"})});
 $("goAdd").addEventListener("click",()=>$("addPanel").scrollIntoView({behavior:"smooth",block:"center"}));
-$("dishForm").addEventListener("submit",e=>{e.preventDefault();const dish=$("dishName").value.trim();if(!dish)return;const type=$("dishType").value;const raw=$("dishPrice").value.trim();custom.push({day:"My Dish",dish,type,price:raw?(raw.startsWith("₹")?raw:"₹"+raw):"—",icon:type==="veg"?"🥗":"🍗"});localStorage.setItem("mealm​itra-dishes",JSON.stringify(custom));$("dishForm").reset();activeFilter="all";document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.filter==="all"));render();toast("Dish menu mein add ho gayi! 🎉")});
+$("dishForm").addEventListener("submit",e=>{e.preventDefault();const dish=$("dishName").value.trim();if(!dish)return;const type=$("dishType").value;const raw=$("dishPrice").value.trim();custom.push({day:"My Dish",dish,type,price:raw?(raw.startsWith("₹")?raw:"₹"+raw):"—",icon:type==="veg"?"🥗":"🍗"});localStorage.setItem("mealmitra-dishes",JSON.stringify(custom));$("dishForm").reset();activeFilter="all";document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.filter==="all"));render();toast("Dish menu mein add ho gayi! 🎉")});
 const now=new Date();$("todayDate").textContent=now.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
 render();
 </script>
