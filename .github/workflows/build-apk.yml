@@ -53,16 +53,88 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: Configure release signing when secrets are available
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+            echo "Release signing secrets are not fully configured; building an UNSIGNED release APK for testing only."
+            echo "SIGNED_RELEASE=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/mealmitra-release.jks
+          test -s android/app/mealmitra-release.jks
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("android/app/build.gradle")
+          s = p.read_text()
+          marker = "    buildTypes {"
+          if marker not in s:
+              raise SystemExit("Could not locate buildTypes block in generated app/build.gradle")
+          signing = """
+              signingConfigs {
+                  release {
+                      storeFile file("mealmitra-release.jks")
+                      storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                      keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+                  }
+              }
+
+          """
+          s = s.replace(marker, signing + marker, 1)
+          release_marker = "        release {"
+          if release_marker not in s:
+              raise SystemExit("Could not locate release build type in generated app/build.gradle")
+          s = s.replace(release_marker, release_marker + "\n            signingConfig signingConfigs.release", 1)
+          p.write_text(s)
+          PY
+          echo "SIGNED_RELEASE=true" >> "$GITHUB_ENV"
+
       - name: Build debug APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Build release APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Verify release signature
+        if: env.SIGNED_RELEASE == 'true'
+        run: |
+          SDK_DIR="$ANDROID_HOME"
+          APKSIGNER=$(find "$SDK_DIR/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+          "$APKSIGNER" verify android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload signed release APK
+        if: env.SIGNED_RELEASE == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: MealMitra-Android-APK
+          name: MealMitra-SIGNED-Release-APK
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload unsigned release APK for testing only
+        if: env.SIGNED_RELEASE != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MealMitra-UNSIGNED-Release-APK-TEST-ONLY
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MealMitra-Debug-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
