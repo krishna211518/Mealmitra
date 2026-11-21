@@ -37,6 +37,7 @@ body.dark .recipe-btn{background:#292524;border-color:#57534e;color:#fed7aa}
 <div class="footer">Made with ❤️ for your everyday meals · MealMitra</div>
 </div><div class="recipe-overlay" id="recipeOverlay" role="dialog" aria-modal="true" aria-labelledby="recipeTitle"><div class="recipe-modal"><div class="recipe-top"><div><h3 id="recipeTitle">Recipe</h3><div class="recipe-meta" id="recipeMeta"></div></div><button class="close-recipe" id="closeRecipe" type="button">✕</button></div><p id="recipeIntro"></p><h4>🧺 Ingredients</h4><ul id="recipeIngredients"></ul><h4>👨‍🍳 Banane ka tareeka</h4><ol id="recipeSteps"></ol></div></div><div class="toast" id="toast"></div>
 <script>
+const $=id=>document.getElementById(id);
 
 const recipeBook={
 "Dal Tadka + Jeera Rice":["30–35 min · Easy","Ghar jaisa simple dinner.",["½ cup dal","1 cup rice","Tomato, onion, garlic","Jeera, haldi, namak, ghee"],["Dal ko haldi aur paani ke saath soft hone tak pakao.","Rice alag se paka lo.","Ghee mein jeera, garlic, onion aur tomato bhuno.","Dal milakar 5–7 minute simmer karo; rice ke saath serve karo."]],
@@ -82,7 +83,6 @@ const base=[
 ];
 let custom=[];try{custom=JSON.parse(localStorage.getItem("mealmitra-dishes")||"[]")}catch(e){custom=[]}
 
-const $=id=>document.getElementById(id);
 const allDishes=()=>[...base,...custom];
 function render(){const query=$("dishSearch").value.trim().toLocaleLowerCase();const type=$("searchType").value;const items=allDishes().filter(x=>(type==="all"||x.type===type)&&(!query||x.dish.toLocaleLowerCase().includes(query)));$("searchCount").textContent=items.length+" dinner option(s) found";$("days").innerHTML=items.length?items.map((x,i)=>'<article class="day"><div class="day-icon">'+(x.icon||"🍽️")+'</div><div class="day-info"><div class="day-name">'+escapeHtml(x.day||"My Dish")+'</div><div class="dish">'+escapeHtml(x.dish)+'</div><span class="tag '+(x.type==="veg"?"veg":"nonveg")+'">'+(x.type==="veg"?"VEG":"NON-VEG")+'</span><br><button class="recipe-btn" type="button" data-recipe="'+i+'">📖 View recipe</button></div><div class="price">'+escapeHtml(x.price||"—")+'</div></article>').join(""):'<div class="empty">Is filter mein abhi koi dish nahi hai. 😊</div>'}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
