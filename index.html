@@ -22,6 +22,29 @@ body.dark .recipe-btn{background:#292524;border-color:#57534e;color:#fed7aa}
 .recipe-modal p,.recipe-meta{color:var(--muted);font-size:13px}.recipe-modal h4{margin:18px 0 8px}.recipe-modal li{margin:7px 0;line-height:1.5;font-size:14px}
 .close-recipe{background:var(--soft);color:var(--ink);border-radius:10px;padding:8px 11px;font-weight:800}
 @media(max-width:620px){.wrap{padding:15px 13px 35px}.top{align-items:flex-start}.date{font-size:10px}.days{grid-template-columns:1fr}.lower{grid-template-columns:1fr}.hero{padding:23px 19px}.hero:after{right:4px;font-size:90px}.section-head{align-items:flex-start;flex-direction:column}.filters{width:100%}.filter{flex:1}}
+
+/* MealMitra liquid-glass visual system and floating central action */
+body{background:radial-gradient(ellipse at 4% 4%,#ffe0bd 0,transparent 34%),radial-gradient(ellipse at 95% 10%,#ffd6bd 0,transparent 32%),linear-gradient(145deg,#fff8ef,#f9eee3 58%,#f5f2e9);background-attachment:fixed}
+.wrap{padding-bottom:118px}
+.date,.theme-toggle,.panel,.day,.suggestion,.empty{border-color:rgba(255,255,255,.82);box-shadow:0 14px 34px rgba(104,62,30,.09);backdrop-filter:blur(20px) saturate(1.25);-webkit-backdrop-filter:blur(20px) saturate(1.25)}
+.date,.theme-toggle{background:rgba(255,255,255,.62)}
+.hero{border:1px solid rgba(255,255,255,.55);background:linear-gradient(120deg,rgba(194,65,12,.94),rgba(249,115,22,.86));box-shadow:0 22px 48px rgba(154,70,22,.18);backdrop-filter:blur(18px)}
+.panel{background:rgba(255,255,255,.62);border-radius:22px}
+.day{background:rgba(255,255,255,.66);border-radius:19px}
+.suggestion{background:rgba(255,247,237,.78);border-radius:16px}
+body.dark{background:radial-gradient(ellipse at 5% 0%,#713a1f 0,transparent 34%),linear-gradient(145deg,#111827,#171923 65%,#0b1220);background-attachment:fixed}
+body.dark .panel,body.dark .day,body.dark .empty,body.dark .suggestion{background:rgba(31,41,55,.78);border-color:rgba(255,255,255,.12);backdrop-filter:blur(20px)}
+.meal-dock{position:fixed;z-index:1000;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,calc(100% - 24px));min-height:70px;display:flex;align-items:center;justify-content:space-around;gap:4px;padding:8px 9px;border:1px solid rgba(255,255,255,.82);border-radius:25px;background:rgba(255,250,243,.76);box-shadow:0 18px 48px rgba(93,54,29,.2),inset 0 1px #fff;backdrop-filter:blur(25px) saturate(1.4);-webkit-backdrop-filter:blur(25px) saturate(1.4)}
+.meal-dock button{flex:1;min-width:0;min-height:48px;border:0;background:transparent;color:#87502f;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.meal-dock button span{font-size:17px}
+.meal-dock .meal-orb{flex:0 0 66px;width:66px;height:66px;min-height:66px;margin-top:-32px;border:4px solid rgba(255,255,255,.95);border-radius:50%;background:radial-gradient(circle at 30% 22%,#ffe4a6,#ff9a43 58%,#e65b19);color:#fff;box-shadow:0 9px 26px rgba(213,91,26,.42),0 0 0 7px rgba(255,160,75,.17);font-size:9px;letter-spacing:.4px}
+.meal-dock .meal-orb span{font-size:22px;line-height:1}
+#pullRefreshHint{position:fixed;z-index:1100;top:9px;left:50%;transform:translate(-50%,-150%);opacity:0;transition:transform .18s ease,opacity .18s ease;padding:9px 15px;border-radius:99px;background:rgba(124,45,18,.92);color:#fff;font-size:12px;font-weight:750;box-shadow:0 8px 24px #5b2b1935;backdrop-filter:blur(16px)}
+body.pull-refresh-visible #pullRefreshHint{transform:translate(-50%,0);opacity:1}
+body.dark .meal-dock{background:rgba(31,41,55,.82);border-color:rgba(255,255,255,.16)}
+body.dark .meal-dock button{color:#fed7aa}
+@media(prefers-reduced-motion:reduce){.meal-dock,#pullRefreshHint{transition:none}}
+
 </style>
 </head>
 <body>
@@ -29,13 +52,19 @@ body.dark .recipe-btn{background:#292524;border-color:#57534e;color:#fed7aa}
 <header class="top"><div class="brand"><div class="logo">🍽️</div><div><h1>MealMitra</h1><p>Apna dinner, apni planning</p></div></div><div class="top-actions"><button class="install-btn" id="installBtn" type="button" hidden>⬇️ Install App</button><button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">🌙 Dark</button><div class="date" id="todayDate">आज का प्लान</div></div></header>
 <section class="hero"><div class="eyebrow">SMART DINNER PLANNER</div><h2>आज खाने में<br>क्या बनेगा? 😋</h2><p>Poore hafte ka dinner plan banao, naye ideas pao aur apni pasand ke dishes add karo.</p><div class="hero-actions"><button class="btn btn-light" id="randomTop">✨ Dinner suggest karo</button><button class="btn btn-glass" id="goAdd">＋ Dish add karo</button></div></section>
 <div class="section-head"><div><h3>📅 Weekly Dinner Plan</h3><p>Apne hafte ka menu ek jagah dekho</p></div></div>
-<section class="panel search-panel"><h3>🔎 Dinner Search</h3><p class="hint">Naam se dish dhoondo ya food type select karo.</p><div class="search-grid"><input class="field" id="dishSearch" type="search" placeholder="Dinner ka naam search karo..." autocomplete="off"><select class="field" id="searchType" aria-label="Food type"><option value="all">🥗 All food</option><option value="veg">🥬 Only Veg</option><option value="nonveg">🍗 Only Non-Veg</option></select></div><p class="note" id="searchCount" aria-live="polite"></p></section><section class="days" id="days"></section>
+<section class="panel search-panel" id="searchPanel"><h3>🔎 Dinner Search</h3><p class="hint">Naam se dish dhoondo ya food type select karo.</p><div class="search-grid"><input class="field" id="dishSearch" type="search" placeholder="Dinner ka naam search karo..." autocomplete="off"><select class="field" id="searchType" aria-label="Food type"><option value="all">🥗 All food</option><option value="veg">🥬 Only Veg</option><option value="nonveg">🍗 Only Non-Veg</option></select></div><p class="note" id="searchCount" aria-live="polite"></p></section><section class="days" id="days"></section>
 <div class="lower">
 <section class="panel" id="suggestPanel"><h3>🎲 Aaj ka dinner</h3><p class="hint">Veg/Non-Veg, kitne log aur optional budget set karo. Budget na ho tab bhi suggestion milega.</p><div class="form-row"><select class="field" id="suggestType"><option value="all">🥗 Veg + Non-Veg</option><option value="veg">🥬 Veg only</option><option value="nonveg">🍗 Non-Veg only</option></select><input class="field" id="peopleCount" type="number" min="1" max="30" value="2" placeholder="Log"></div><div class="form-row"><input class="field" id="budgetInput" type="number" min="1" max="100000" placeholder="Total budget ₹ (optional)"></div><div class="suggestion" id="suggestion"><strong>Dal Tadka + Jeera Rice</strong><small>Simple aur tasty choice</small></div><button class="add-btn" id="randomBtn">✨ Mere liye dinner suggest karo</button></section>
 <section class="panel" id="addPanel"><h3>➕ Apni dish add karo</h3><p class="hint">Apne menu mein favourite dish jodo.</p><form id="dishForm"><input class="field" id="dishName" placeholder="Dish ka naam" maxlength="45" required><div class="form-row"><select class="field" id="dishType"><option value="veg">🥬 Veg</option><option value="nonveg">🍗 Non-Veg</option></select><input class="field" id="dishPrice" placeholder="Price (₹)" inputmode="numeric" maxlength="7"></div><button class="add-btn" style="width:100%;margin-top:10px" type="submit">＋ Add to menu</button></form><p class="note">Tumhari custom dishes isi browser mein save rahengi.</p></section>
 </div>
 <div class="footer">Made with ❤️ for your everyday meals · MealMitra</div>
-</div><div class="recipe-overlay" id="recipeOverlay" role="dialog" aria-modal="true" aria-labelledby="recipeTitle"><div class="recipe-modal"><div class="recipe-top"><div><h3 id="recipeTitle">Recipe</h3><div class="recipe-meta" id="recipeMeta"></div></div><button class="close-recipe" id="closeRecipe" type="button">✕</button></div><p id="recipeIntro"></p><h4>🧺 Ingredients</h4><ul id="recipeIngredients"></ul><h4>👨‍🍳 Banane ka tareeka</h4><ol id="recipeSteps"></ol></div></div><div class="toast" id="toast"></div>
+</div><nav class="meal-dock" aria-label="Main navigation">
+<button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>⌂</span>Home</button>
+<button type="button" onclick="document.getElementById('days').scrollIntoView({behavior:'smooth'})"><span>▦</span>Menu</button>
+<button class="meal-orb" type="button" aria-label="Suggest dinner" onclick="randomDish();document.getElementById('suggestPanel').scrollIntoView({behavior:'smooth',block:'center'})"><span>✦</span>IDEA</button>
+<button type="button" onclick="document.getElementById('searchPanel').scrollIntoView({behavior:'smooth'})"><span>⌕</span>Search</button>
+<button type="button" onclick="document.getElementById('addPanel').scrollIntoView({behavior:'smooth'})"><span>＋</span>Add</button>
+</nav><div id="pullRefreshHint" role="status" aria-live="polite">Pull down to refresh</div><div class="recipe-overlay" id="recipeOverlay" role="dialog" aria-modal="true" aria-labelledby="recipeTitle"><div class="recipe-modal"><div class="recipe-top"><div><h3 id="recipeTitle">Recipe</h3><div class="recipe-meta" id="recipeMeta"></div></div><button class="close-recipe" id="closeRecipe" type="button">✕</button></div><p id="recipeIntro"></p><h4>🧺 Ingredients</h4><ul id="recipeIngredients"></ul><h4>👨‍🍳 Banane ka tareeka</h4><ol id="recipeSteps"></ol></div></div><div class="toast" id="toast"></div>
 <script>
 const $=id=>document.getElementById(id);
 
@@ -167,6 +196,14 @@ const now=new Date();$("todayDate").textContent=now.toLocaleDateString("en-IN",{
 function applyTheme(theme){const dark=theme==="dark";document.body.classList.toggle("dark",dark);$("themeToggle").textContent=dark?"☀️ Light":"🌙 Dark";$("themeColorMeta").content=dark?"#111827":"#fff7ed"}const savedTheme=localStorage.getItem("mealmitra-theme");applyTheme(savedTheme==="dark"?"dark":"light");
 $("themeToggle").addEventListener("click",()=>{const next=document.body.classList.contains("dark")?"light":"dark";localStorage.setItem("mealmitra-theme",next);applyTheme(next)});
 render();
+
+let mealPullStartY=0,mealPullDistance=0,mealPullTracking=false;
+function clearMealPull(){mealPullTracking=false;mealPullDistance=0;document.body.classList.remove('pull-refresh-visible')}
+document.addEventListener('touchstart',event=>{if(event.touches.length!==1||window.scrollY>0){clearMealPull();return}mealPullStartY=event.touches[0].clientY;mealPullDistance=0;mealPullTracking=true},{passive:true});
+document.addEventListener('touchmove',event=>{if(!mealPullTracking||event.touches.length!==1)return;const dy=event.touches[0].clientY-mealPullStartY,dx=Math.abs(event.touches[0].clientX-(event.changedTouches[0]?.clientX||event.touches[0].clientX));if(window.scrollY>0||dy<=0||dy<dx){clearMealPull();return}mealPullDistance=Math.min(dy,150);if(mealPullDistance>8){if(event.cancelable)event.preventDefault();document.body.classList.add('pull-refresh-visible');const hint=$('pullRefreshHint');if(hint)hint.textContent=mealPullDistance>=85?'Release to refresh':'Pull down to refresh'}},{passive:false});
+document.addEventListener('touchend',()=>{if(!mealPullTracking)return;const refresh=mealPullDistance>=85;const hint=$('pullRefreshHint');if(refresh&&hint){hint.textContent='Refreshing MealMitra…';document.body.classList.add('pull-refresh-visible');setTimeout(()=>window.location.reload(),140)}else clearMealPull()},{passive:true});
+document.addEventListener('touchcancel',clearMealPull,{passive:true});
+
 let installPrompt=null;const installButton=$("installBtn");const isInstalled=()=>window.matchMedia("(display-mode: standalone)").matches||window.matchMedia("(display-mode: fullscreen)").matches||navigator.standalone===true;if(isInstalled())installButton.hidden=true;window.addEventListener("beforeinstallprompt",e=>{if(isInstalled())return;e.preventDefault();installPrompt=e;installButton.hidden=false});installButton.addEventListener("click",async()=>{if(!installPrompt)return;const promptEvent=installPrompt;installPrompt=null;try{await promptEvent.prompt();const choice=await promptEvent.userChoice;if(choice&&choice.outcome==="accepted"){installButton.hidden=true;toast("MealMitra install ho gaya! 🎉")}else{installButton.hidden=false}}catch(error){installButton.hidden=true;toast("Install prompt abhi available nahi hai.")}});window.addEventListener("appinstalled",()=>{installPrompt=null;installButton.hidden=true;toast("MealMitra install ho gaya! 🎉")});if("serviceWorker" in navigator && location.protocol.startsWith("http"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script>
 </body>
