@@ -45,11 +45,32 @@ body.dark .meal-dock{background:rgba(31,41,55,.82);border-color:rgba(255,255,255
 body.dark .meal-dock button{color:#fed7aa}
 @media(prefers-reduced-motion:reduce){.meal-dock,#pullRefreshHint{transition:none}}
 
+
+/* MEALMITRA PERMANENT DARK MODE + LIQUID GLASS NAV */
+:root{color-scheme:dark;--bg:#080f1d;--paper:#111d30;--ink:#f2f6ff;--muted:#a8b7cc;--soft:#202c40;--line:#34445d;--shadow:0 16px 42px rgba(0,0,0,.34)}
+body{background:radial-gradient(ellipse at 6% 0%,rgba(36,83,125,.34),transparent 36%),radial-gradient(ellipse at 95% 12%,rgba(120,66,35,.18),transparent 30%),linear-gradient(145deg,#07101e,#0d1728 58%,#101827)!important;background-attachment:fixed!important;color:var(--ink)!important}
+body.dark .day,body.dark .panel,body.dark .empty,body.dark .suggestion{background:rgba(17,29,48,.82)!important;border-color:rgba(157,190,229,.17)!important;color:var(--ink);box-shadow:0 12px 32px rgba(0,0,0,.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+body.dark .date,body.dark .filter{background:rgba(18,31,50,.9);border-color:rgba(157,190,229,.2);color:#f4c18e}
+body.dark .field{background:rgba(7,16,30,.82);border-color:#3b4d68;color:#f4f7ff}
+body.dark .field:focus{outline:2px solid rgba(255,159,83,.45);outline-offset:1px}
+body.dark .field::placeholder{color:#91a1b8}
+body.dark .suggestion{color:var(--ink)}
+body.dark .day-icon{background:#3a2c27}
+body.dark .meal-dock{background:rgba(12,23,39,.78)!important;border:1px solid rgba(194,218,248,.22)!important;box-shadow:0 18px 48px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.16)!important;backdrop-filter:blur(28px) saturate(1.55)!important;-webkit-backdrop-filter:blur(28px) saturate(1.55)!important}
+body.dark .meal-dock button{color:#c7d6ec!important;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+body.dark .meal-dock button:active{color:#fff!important}
+body.dark .meal-dock .meal-orb{border:3px solid rgba(255,224,194,.72)!important;background:radial-gradient(circle at 30% 22%,#ffe0b6,#ff9a52 56%,#d95a27)!important;color:#fff!important;box-shadow:0 10px 30px rgba(225,105,48,.38),0 0 0 7px rgba(255,155,83,.12),inset 0 1px rgba(255,255,255,.65)!important}
+body.dark #pullRefreshHint{background:rgba(18,31,50,.94);border:1px solid rgba(255,190,133,.25);color:#ffe1c2}
+body.dark .hero{border:1px solid rgba(255,210,174,.18);box-shadow:0 18px 45px rgba(0,0,0,.28)}
+body.dark .recipe-modal{background:#111d30;border-color:#34445d;color:#f2f6ff}
+body.dark .recipe-btn{background:#263247;border-color:#46536b;color:#ffd5b0}
+@media(max-width:620px){.wrap{padding-bottom:112px}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="brand"><div class="logo">🍽️</div><div><h1>MealMitra</h1><p>Apna dinner, apni planning</p></div></div><div class="top-actions"><button class="install-btn" id="installBtn" type="button" hidden>⬇️ Install App</button><button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">🌙 Dark</button><div class="date" id="todayDate">आज का प्लान</div></div></header>
+<header class="top"><div class="brand"><div class="logo">🍽️</div><div><h1>MealMitra</h1><p>Apna dinner, apni planning</p></div></div><div class="top-actions"><button class="install-btn" id="installBtn" type="button" hidden>⬇️ Install App</button><div class="date" id="todayDate">आज का प्लान</div></div></header>
 <section class="hero"><div class="eyebrow">SMART DINNER PLANNER</div><h2>आज खाने में<br>क्या बनेगा? 😋</h2><p>Poore hafte ka dinner plan banao, naye ideas pao aur apni pasand ke dishes add karo.</p><div class="hero-actions"><button class="btn btn-light" id="randomTop">✨ Dinner suggest karo</button><button class="btn btn-glass" id="goAdd">＋ Dish add karo</button></div></section>
 <div class="section-head"><div><h3>📅 Weekly Dinner Plan</h3><p>Apne hafte ka menu ek jagah dekho</p></div></div>
 <section class="panel search-panel" id="searchPanel"><h3>🔎 Dinner Search</h3><p class="hint">Naam se dish dhoondo ya food type select karo.</p><div class="search-grid"><input class="field" id="dishSearch" type="search" placeholder="Dinner ka naam search karo..." autocomplete="off"><select class="field" id="searchType" aria-label="Food type"><option value="all">🥗 All food</option><option value="veg">🥬 Only Veg</option><option value="nonveg">🍗 Only Non-Veg</option></select></div><p class="note" id="searchCount" aria-live="polite"></p></section><section class="days" id="days"></section>
@@ -193,8 +214,7 @@ $("randomBtn").addEventListener("click",randomDish);$("randomTop").addEventListe
 $("goAdd").addEventListener("click",()=>$("addPanel").scrollIntoView({behavior:"smooth",block:"center"}));
 $("dishForm").addEventListener("submit",e=>{e.preventDefault();const dish=$("dishName").value.trim();if(!dish)return;const type=$("dishType").value;const raw=$("dishPrice").value.trim();custom.push({day:"My Dish",dish,type,price:raw?(raw.startsWith("₹")?raw:"₹"+raw):"—",icon:type==="veg"?"🥗":"🍗"});localStorage.setItem("mealmitra-dishes",JSON.stringify(custom));$("dishForm").reset();$("dishSearch").value="";$("searchType").value="all";render();toast("Dish menu mein add ho gayi! 🎉")});
 const now=new Date();$("todayDate").textContent=now.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
-function applyTheme(theme){const dark=theme==="dark";document.body.classList.toggle("dark",dark);$("themeToggle").textContent=dark?"☀️ Light":"🌙 Dark";$("themeColorMeta").content=dark?"#111827":"#fff7ed"}const savedTheme=localStorage.getItem("mealmitra-theme");applyTheme(savedTheme==="dark"?"dark":"light");
-$("themeToggle").addEventListener("click",()=>{const next=document.body.classList.contains("dark")?"light":"dark";localStorage.setItem("mealmitra-theme",next);applyTheme(next)});
+document.body.classList.add("dark");$("themeColorMeta").content="#111827";
 render();
 
 let mealPullStartY=0,mealPullDistance=0,mealPullTracking=false;
